@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Система управління бібліотекою</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+
+<div id="auth-screen">
+    <div class="auth-card">
+
+        <h1 class="auth-title">Бібліотека</h1>
+        <p class="auth-subtitle">Система управління</p>
+
+        <!-- Перемикач вкладок -->
+        <div class="auth-tabs">
+            <button id="tab-login-btn" class="auth-tab active" onclick="switchAuthTab('login')">
+                Вхід
+            </button>
+            <button id="tab-register-btn" class="auth-tab" onclick="switchAuthTab('register')">
+                Реєстрація
+            </button>
+        </div>
+
+
+        <div id="login-panel">
+            <div id="login-error" class="auth-error" style="display:none;"></div>
+            <input id="login-username" type="text" class="auth-input"
+                   placeholder="Логін" autocomplete="username">
+            <input id="login-password" type="password" class="auth-input"
+                   placeholder="Пароль" autocomplete="current-password"
+                   onkeydown="if(event.key==='Enter') doLogin()">
+            <button class="auth-btn" onclick="doLogin()">Увійти</button>
+        </div>
+
+
+        <div id="register-panel" style="display:none;">
+            <div id="register-error" class="auth-error" style="display:none;"></div>
+            <div id="register-success" class="auth-success" style="display:none;"></div>
+            <input id="reg-username" type="text" class="auth-input"
+                   placeholder="Логін (мінімум 3 символи)" autocomplete="username">
+            <input id="reg-password" type="password" class="auth-input"
+                   placeholder="Пароль (мінімум 4 символи)" autocomplete="new-password">
+            <input id="reg-password2" type="password" class="auth-input"
+                   placeholder="Підтвердити пароль" autocomplete="new-password"
+                   onkeydown="if(event.key==='Enter') doRegister()">
+            <button class="auth-btn" onclick="doRegister()">Зареєструватися</button>
+            <p class="auth-hint">⚠️ Нові акаунти отримують роль <strong>USER</strong> (тільки перегляд)</p>
+        </div>
+    </div>
+</div>
+
+
+<div id="app-screen" style="display:none;">
+    <div class="container">
+
+
+        <div class="app-header">
+            <h1> Система управління бібліотекою</h1>
+            <div class="user-info">
+                <span id="user-badge" class="user-badge"></span>
+                <button class="btn-logout" onclick="doLogout()">Вийти</button>
+            </div>
+        </div>
+
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('books', event)">Книги</button>
+            <button class="tab-btn" onclick="showTab('readers', event)">Читачі</button>
+            <button class="tab-btn" onclick="showTab('loans', event)">Видача книг</button>
+        </div>
+
+
+        <div id="books-tab" class="tab-content active">
+            <h2>Книги</h2>
+
+
+            <div id="book-form-wrapper">
+                <form id="book-form" class="form">
+                    <input type="hidden" id="book-id">
+                    <input type="text" id="book-title" placeholder="Назва книги" required>
+                    <input type="text" id="book-author" placeholder="Автор" required>
+                    <input type="text" id="book-isbn" placeholder="ISBN">
+                    <input type="number" id="book-year" placeholder="Рік видання">
+                    <input type="number" id="book-quantity" placeholder="Кількість" min="1" value="1">
+                    <button type="submit">Зберегти</button>
+                    <button type="button" onclick="resetBookForm()">Скасувати</button>
+                </form>
+            </div>
+
+            <table id="books-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Назва</th>
+                    <th>Автор</th>
+                    <th>ISBN</th>
+                    <th>Рік</th>
+                    <th>Кількість</th>
+                    <th>Доступно</th>
+                    <th class="col-actions">Дії</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+
+        <div id="readers-tab" class="tab-content">
+            <h2>Читачі</h2>
+
+            <div id="reader-form-wrapper">
+                <form id="reader-form" class="form">
+                    <input type="hidden" id="reader-id">
+                    <input type="text" id="reader-name" placeholder="ПІБ" required>
+                    <input type="email" id="reader-email" placeholder="Email">
+                    <input type="tel" id="reader-phone" placeholder="Телефон">
+                    <button type="submit">Зберегти</button>
+                    <button type="button" onclick="resetReaderForm()">Скасувати</button>
+                </form>
+            </div>
+
+            <table id="readers-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ПІБ</th>
+                    <th>Email</th>
+                    <th>Телефон</th>
+                    <th>Дата реєстрації</th>
+                    <th class="col-actions">Дії</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+
+        <div id="loans-tab" class="tab-content">
+            <h2>Видача книг</h2>
+
+
+            <div id="loan-form-wrapper">
+                <form id="loan-form" class="form">
+                    <select id="loan-book" required>
+                        <option value="">Оберіть книгу</option>
+                    </select>
+                    <select id="loan-reader" required>
+                        <option value="">Оберіть читача</option>
+                    </select>
+                    <button type="submit">Видати книгу</button>
+                </form>
+            </div>
+
+            <table id="loans-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Книга</th>
+                    <th>Читач</th>
+                    <th>Дата видачі</th>
+                    <th>Дата повернення</th>
+                    <th>Статус</th>
+                    <th class="col-actions">Дії</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script src="index.js"></script>
+</body>
+</html>
