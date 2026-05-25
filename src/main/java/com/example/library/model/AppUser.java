@@ -33,11 +33,11 @@ public class AppUser implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    // Зберігається як "ROLE_ADMIN" або "ROLE_USER"
+
     @Column(nullable = false)
     private String role;
 
-    // ===== UserDetails methods =====
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
