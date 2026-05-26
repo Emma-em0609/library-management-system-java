@@ -54,25 +54,25 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Публічні ендпоінти (логін та реєстрація)
+
                         .requestMatchers("/api/auth/**").permitAll()
-                        // Swagger
+
                         .requestMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/v3/api-docs"
                         ).permitAll()
-                        // Статичні файли фронтенду
+
                         .requestMatchers(
                                 "/",
                                 "/index.html",
                                 "/index.css",
                                 "/index.js"
                         ).permitAll()
-                        // USER і ADMIN можуть лише читати
+
                         .requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("USER", "ADMIN")
-                        // Тільки ADMIN може створювати, редагувати, видаляти
+
                         .requestMatchers(HttpMethod.POST, "/api/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN")

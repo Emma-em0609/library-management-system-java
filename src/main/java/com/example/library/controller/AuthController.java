@@ -59,7 +59,7 @@ public class AuthController {
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
         String token = jwtService.generateToken(userDetails);
 
-        // Повертаємо токен і роль — фронтенд використає роль для показу/приховування кнопок
+
         String role = userDetails.getAuthorities().iterator().next().getAuthority();
 
         return ResponseEntity.ok(Map.of(
@@ -72,20 +72,20 @@ public class AuthController {
     @PostMapping("/register")
     @Operation(summary = "Зареєструвати нового користувача (роль USER)")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
-        // Перевірка чи логін вже зайнятий
+
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             return ResponseEntity.badRequest()
                     .body(Map.of("error", "Користувач з таким логіном вже існує"));
         }
 
-        // Перевірка що поля не порожні
+
         if (request.getUsername() == null || request.getUsername().isBlank() ||
                 request.getPassword() == null || request.getPassword().isBlank()) {
             return ResponseEntity.badRequest()
                     .body(Map.of("error", "Логін та пароль не можуть бути порожніми"));
         }
 
-        // Мінімальна довжина пароля
+
         if (request.getPassword().length() < 4) {
             return ResponseEntity.badRequest()
                     .body(Map.of("error", "Пароль має бути не менше 4 символів"));
@@ -94,7 +94,7 @@ public class AuthController {
         AppUser newUser = new AppUser();
         newUser.setUsername(request.getUsername());
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
-        newUser.setRole("ROLE_USER"); // Нові користувачі завжди отримують роль USER
+        newUser.setRole("ROLE_USER");
         userRepository.save(newUser);
 
         return ResponseEntity.ok(Map.of("message", "Реєстрація успішна! Тепер увійдіть."));

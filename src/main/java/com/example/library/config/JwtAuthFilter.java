@@ -20,8 +20,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
-    // @Lazy більше не потрібен — циклічна залежність усунена,
-    // бо UserDetailsService тепер в окремому класі CustomUserDetailsService
+
     public JwtAuthFilter(JwtService jwtService, UserDetailsService userDetailsService) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
