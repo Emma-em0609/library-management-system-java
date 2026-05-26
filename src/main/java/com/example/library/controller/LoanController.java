@@ -1,13 +1,14 @@
 package com.example.library.controller;
 
 import com.example.library.model.Loan;
+import com.example.library.model.LoanRequest;
 import com.example.library.service.LoanService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/loans")
@@ -30,8 +31,8 @@ public class LoanController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Видати книгу читачу")
-    public Loan create(@RequestBody Map<String, Long> body) {
-        return loanService.create(body.get("book_id"), body.get("reader_id"));
+    public Loan create(@RequestBody LoanRequest request) {
+        return loanService.create(request.getBookId(), request.getReaderId());
     }
 
     @PutMapping("/{id}/return")

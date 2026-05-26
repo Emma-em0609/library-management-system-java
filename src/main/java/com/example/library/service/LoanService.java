@@ -8,6 +8,7 @@ import com.example.library.repository.ReaderRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -31,7 +32,8 @@ public class LoanService {
     }
 
     public Loan create(Long bookId, Long readerId) {
-        Book book = bookRepository.findById(bookId).orElseThrow();
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Книгу не знайдено"));
 
         if (book.getAvailable() < 1) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Книга недоступна");
@@ -39,7 +41,8 @@ public class LoanService {
 
         Loan loan = new Loan();
         loan.setBook(book);
-        loan.setReader(readerRepository.findById(readerId).orElseThrow());
+        loan.setReader(readerRepository.findById(readerId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Читача не знайдено")));
 
         book.setAvailable(book.getAvailable() - 1);
         bookRepository.save(book);
@@ -48,7 +51,9 @@ public class LoanService {
     }
 
     public Loan returnBook(Long id) {
-        Loan loan = loanRepository.findById(id).orElseThrow();
+        Loan loan = loanRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Видачу не знайдено"));
+
         loan.setReturned(true);
         loan.setReturnDate(LocalDate.now());
 
@@ -60,7 +65,8 @@ public class LoanService {
     }
 
     public void delete(Long id) {
-        Loan loan = loanRepository.findById(id).orElseThrow();
+        Loan loan = loanRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Видачу не знайдено"));
 
         if (!loan.getReturned()) {
             Book book = loan.getBook();
